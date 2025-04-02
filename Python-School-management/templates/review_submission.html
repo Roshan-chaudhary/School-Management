@@ -1,0 +1,45 @@
+{% extends 'teacher/teacherbase.html' %}
+{% load static %}
+
+{% block content %}
+
+<h2 style="color: #007bff; text-align: center;">Review Submission</h2>
+
+<p style="font-size: 18px; color: #333;">
+    <strong>Assignment:</strong> {{ submission.assignment.title|default:"No Assignment" }}
+</p>
+
+<p style="font-size: 18px; color: #333;">
+    <strong>Submitted by:</strong> {{ submission.student.username|default:"Unknown Student" }}
+</p>
+
+<p style="font-size: 18px; color: {% if submission.status == 'pending' %}orange{% else %}green{% endif %};">
+    <strong>Status:</strong> {{ submission.status }}
+</p>
+
+<p style="margin-bottom: 15px;">
+    <a href="{{ submission.attachment.url }}" style="text-decoration: none; background-color: #28a745; color: white; padding: 10px 15px; border-radius: 5px;">
+        Download Submission
+    </a>
+</p>
+
+<form method="post" style="border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
+    {% csrf_token %}
+
+    <label style="font-weight: bold;">Feedback:</label><br>
+    <textarea name="feedback" style="width: 100%; height: 100px; border: 1px solid #ccc; border-radius: 5px; padding: 8px;">{{ submission.teacher_feedback }}</textarea>
+
+    <br><br>
+
+    <label style="font-weight: bold;">Grade:</label><br>
+    <input type="text" name="grade" value="{{ submission.grade }}" 
+           style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+
+    <br><br>
+
+    <button type="submit" style="background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">
+        Submit Review
+    </button>
+</form>
+
+{% endblock content %}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centered Nepali Calendar Card</title>
+    <!-- Include Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <!-- Card Container -->
+    <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl p-6">
+        <h1 class="text-3xl font-semibold text-center text-gray-800 mb-4">Nepali Calendar</h1>
+        <!-- Embedded iframe styled with Tailwind -->
+        <div class="w-full h-[1200px] overflow-hidden rounded-lg">
+            <iframe 
+                src="http://saralnepali.com/widgets/nepali-calendar.php" 
+                frameborder="0" 
+                scrolling="no" 
+                class="w-full h-full border-none"
+                allowtransparency="true">
+            </iframe>
+        </div>
+    </div>
+</body>
+</html>

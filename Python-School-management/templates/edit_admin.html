@@ -1,0 +1,105 @@
+{% extends 'admin/adminbase.html' %}
+{% load static %}
+
+{% block content %}
+<div style="max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); font-family: Arial, sans-serif;">
+    <h3 style="text-align: center; color: #333; margin-bottom: 15px;">Edit Admin</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Username:</label>
+        <input type="text" name="username" value="{{ admin.username }}" 
+               style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 10px;" required>
+        
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">First Name:</label>
+        <input type="text" name="first_name" value="{{ admin.first_name }}" 
+               style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 10px;">
+
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Last Name:</label>
+        <input type="text" name="last_name" value="{{ admin.last_name }}" 
+               style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 10px;">
+
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Email:</label>
+        <input type="email" name="email" value="{{ admin.email }}" 
+               style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 10px;">
+
+        <!-- Profile Picture Section -->
+        <div class="profile-box" style="text-align: center; margin-top: 20px;">
+           <h2 style="font-size: xx-large;">
+            After uploading, check your profile icon at the top left
+           </h2>
+        </div>
+
+        <!-- File Upload Button -->
+        <input type="file" id="profile-upload" style="display: none;" accept="image/*" onchange="previewImage()" />
+        <button type="button" 
+                onclick="document.getElementById('profile-upload').click()" 
+                style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+            Upload Pic
+        </button>
+
+        <div class="done-button" style="margin-top: 20px;">
+            <button type="button" 
+                    onclick="saveImage()" 
+                    style="background-color: #008CBA; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                Done
+            </button>
+        </div>
+
+        <button type="submit" 
+                style="width: 100%; background: #28a745; color: white; padding: 10px; 
+                       border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+            Save Changes
+        </button>
+    </form>
+</div>
+
+<script>
+    function previewImage() {
+        const file = document.getElementById('profile-upload').files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Update the preview image with the selected file
+            document.getElementById('profile-preview').src = e.target.result;
+        };
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function saveImage() {
+        const formData = new FormData();
+        const file = document.getElementById('profile-upload').files[0];
+
+        if (file) {
+            formData.append('profile_picture', file);
+
+            fetch('/save-profile-picture/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'  // Include the CSRF token
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Profile picture updated successfully');
+                    // Update the preview image with the new image URL
+                    document.getElementById('profile-preview').src = data.image_url;
+                } else {
+                    alert('Failed to upload the picture: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while uploading the image');
+            });
+        } else {
+            alert('No file selected');
+        }
+    }
+</script>
+
+{% endblock %}

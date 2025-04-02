@@ -1,0 +1,32 @@
+
+// Run that Command in Terminal to Run Application
+
+python -m venv venv
+.\venv\Scripts\Activate
+pip install django
+python -m django --version
+pip install django-widget-tweaks
+
+
+python manage.py makemigrations
+python manage.py migrate
+
+python3 manage.py runserver
+
+
+git config --global user.email "roshanchy313@gmail.com"
+
+
+
+//  This is Not Command 
+
+
+asgiref==3.2.7
+Django==3.0.5
+django-widget-tweaks==1.4.8
+pytz==2020.1
+sqlparse==0.3.1
+
+
+
+ git config --global user.email "roshanchy313@gmail.com"

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style type="text/css">
+    a:link { text-decoration: none; }
+    .order-card { color: #fff; }
+    .bg-c-blue { background: linear-gradient(45deg, #4099ff, #73b4ff); }
+    .bg-c-green { background: linear-gradient(45deg, #2ed8b6, #59e0c5); }
+    .bg-c-yellow { background: linear-gradient(45deg, #FFB64D, #ffcb80); }
+    .bg-c-pink { background: linear-gradient(45deg, #FF5370, #ff869a); }
+    .card {
+      border-radius: 5px;
+      -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+      box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+      border: none;
+      margin-bottom: 30px;
+      -webkit-transition: all 0.3s ease-in-out;
+      transition: all 0.3s ease-in-out;
+    }
+    .card .card-block { padding: 25px; }
+    .order-card i { font-size: 26px; }
+    .f-left { float: left; }
+    .f-right { float: right; }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+  <div class="container mx-auto p-4">
+    <!-- Cards Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card bg-c-blue order-card">
+        <div class="card-block">
+          <h6 class="m-b-20">Total Teacher</h6>
+          <h2 class="text-right"><i class="fas fa-chalkboard-teacher f-left"></i><span id="teachercount">{{teachercount}}</span></h2>
+          <p class="m-b-0">Pending Teacher<span class="f-right" id="pendingteachercount">{{pendingteachercount}}</span></p>
+        </div>
+      </div>
+
+      <div class="card bg-c-green order-card">
+        <div class="card-block">
+          <h6 class="m-b-20">Total Student</h6>
+          <h2 class="text-right"><i class="fas fa-user-graduate f-left"></i><span id="studentcount">{{studentcount}}</span></h2>
+          <p class="m-b-0">Pending Students<span class="f-right" id="pendingstudentcount">{{pendingstudentcount}}</span></p>
+        </div>
+      </div>
+
+      <div class="card bg-c-yellow order-card">
+        <div class="card-block">
+          <h6 class="m-b-20">Teachers Salary</h6>
+          <h2 class="text-right"><i class="fas fa-search-dollar f-left"></i><span id="teachersalary">{{teachersalary}}</span></h2>
+          <p class="m-b-0">Pending Salary<span class="f-right" id="pendingteachersalary">{{pendingteachersalary}}</span></p>
+        </div>
+      </div>
+
+      <div class="card bg-c-pink order-card">
+        <div class="card-block">
+          <h6 class="m-b-20">Student Fee</h6>
+          <h2 class="text-right"><i class="fas fa-search-dollar f-left"></i><span id="studentfee">{{studentfee}}</span></h2>
+          <p class="m-b-0">Pending Dues<span class="f-right" id="pendingstudentfee">{{pendingstudentfee}}</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graph and Pie Chart Section -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Student Enrollment Pie Chart -->
+      <div class="bg-white p-4 shadow rounded-lg">
+        <h2 class="text-xl font-semibold mb-4">Student Enrollment Pie Chart</h2>
+        <canvas id="studentPieChart" class="w-full h-64"></canvas>
+      </div>
+
+      <!-- Teacher Enrollment Pie Chart -->
+      <div class="bg-white p-4 shadow rounded-lg">
+        <h2 class="text-xl font-semibold mb-4">Teacher Enrollment Pie Chart</h2>
+        <canvas id="teacherPieChart" class="w-full h-64"></canvas>
+      </div>
+
+      <!-- Fee Collection Graph -->
+      <div class="bg-white p-4 shadow rounded-lg">
+        <h2 class="text-xl font-semibold mb-4">Fee Collection Graph</h2>
+        <canvas id="feeGraph" class="w-full h-64"></canvas>
+      </div>
+
+      <!-- Teacher Salary Graph -->
+      <div class="bg-white p-4 shadow rounded-lg">
+        <h2 class="text-xl font-semibold mb-4">Teacher Salary Graph</h2>
+        <canvas id="teacherSalaryGraph" class="w-full h-64"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Extract dynamic data from the DOM after the server renders the template
+    const teachercount = parseInt(document.getElementById('teachercount').textContent) || 0;
+    const pendingteachercount = parseInt(document.getElementById('pendingteachercount').textContent) || 0;
+    const studentcount = parseInt(document.getElementById('studentcount').textContent) || 0;
+    const pendingstudentcount = parseInt(document.getElementById('pendingstudentcount').textContent) || 0;
+
+    // Example calculations for fees and salaries (adjust as per your logic)
+    const feePerStudent = 1000; // Example: $1000 per student
+    const salaryPerTeacher = 5000; // Example: $5000 per teacher
+    const studentfee = studentcount * feePerStudent;
+    const pendingstudentfee = pendingstudentcount * feePerStudent;
+    const teachersalary = teachercount * salaryPerTeacher;
+    const pendingteachersalary = pendingteachercount * salaryPerTeacher;
+
+    // Update the salary and fee card values dynamically
+    document.getElementById('studentfee').textContent = studentfee;
+    document.getElementById('pendingstudentfee').textContent = pendingstudentfee;
+    document.getElementById('teachersalary').textContent = teachersalary;
+    document.getElementById('pendingteachersalary').textContent = pendingteachersalary;
+
+    // Student Enrollment Pie Chart
+    const studentPieCtx = document.getElementById('studentPieChart').getContext('2d');
+    const studentPieChart = new Chart(studentPieCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Total Students', 'Pending Students'],
+        datasets: [{
+          label: 'Student Enrollment',
+          data: [studentcount, pendingstudentcount],
+          backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+          borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+          borderWidth: 1
+        }]
+      }
+    });
+
+    // Teacher Enrollment Pie Chart
+    const teacherPieCtx = document.getElementById('teacherPieChart').getContext('2d');
+    const teacherPieChart = new Chart(teacherPieCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Total Teachers', 'Pending Teachers'],
+        datasets: [{
+          label: 'Teacher Enrollment',
+          data: [teachercount, pendingteachercount],
+          backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+          borderColor: ['rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'],
+          borderWidth: 1
+        }]
+      }
+    });
+
+    // Fee Collection Graph
+    const feeGraphCtx = document.getElementById('feeGraph').getContext('2d');
+    const feeGraph = new Chart(feeGraphCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Total Fee', 'Pending Fee'],
+        datasets: [{
+          label: 'Fee Collection',
+          data: [studentfee, pendingstudentfee],
+          backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+          borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1000 } // Adjust based on fee range
+          }
+        }
+      }
+    });
+
+    // Teacher Salary Graph
+    const teacherSalaryGraphCtx = document.getElementById('teacherSalaryGraph').getContext('2d');
+    const teacherSalaryGraph = new Chart(teacherSalaryGraphCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Total Salary', 'Pending Salary'],
+        datasets: [{
+          label: 'Teacher Salary',
+          data: [teachersalary, pendingteachersalary],
+          backgroundColor: ['rgba(153, 102, 255, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+          borderColor: ['rgba(153, 102, 255, 1)', 'rgba(255, 99, 132, 1)'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 5000 } // Adjust based on salary range
+          }
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

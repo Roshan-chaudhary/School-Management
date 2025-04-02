@@ -1,0 +1,131 @@
+{% extends base_template %}
+{% load static %}
+
+{% block content %}
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4CAF50;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #d1e7dd;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .reason-cell {
+            max-width: 150px;
+            word-wrap: break-word;
+            white-space: normal;
+            text-align: left;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .actions a {
+            color: white;
+            background-color: #007BFF;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .actions a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<h2>Leave Requests</h2>
+<table>
+    <tr>
+        <th>User</th>
+        <th>User Type</th>
+        <th>Leave Type</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Total Days</th>
+        <th class="reason-cell">Reason</th>
+        <th>Attachment</th>
+        <th>Status</th>
+        {% if request.user.is_staff %}
+            <th>Actions</th>
+        {% endif %}
+    </tr>
+    {% for leave in leaves %}
+    <tr>
+        <td>{{ leave.user.username }}</td>
+        <td>{{ leave.user_type }}</td>
+        <td>{{ leave.leave_type }}</td>
+        <td>{{ leave.start_date }}</td>
+        <td>{{ leave.end_date }}</td>
+        <td>{{ leave.total_days }}</td>
+        <td class="reason-cell">{{ leave.reason }}</td>
+        <td>
+            {% if leave.attachment %}
+                <a href="{{ leave.attachment.url }}">View</a>
+            {% else %}
+                No Attachment
+            {% endif %}
+        </td>
+        <td>{{ leave.status }}</td>
+        {% if request.user.is_staff %}
+            <td class="actions">
+                <a href="{% url 'manage_leave' leave.id 'approve' %}">Approve</a>
+                <a href="{% url 'manage_leave' leave.id 'reject' %}">Reject</a>
+            </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock content %}

@@ -1,0 +1,42 @@
+{% extends 'student/studentbase.html' %}
+
+{% block content %}
+
+<div style="max-width: 700px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+
+    <h2 style="color: #007bff; text-align: center; border-bottom: 3px solid #007bff; padding-bottom: 10px;">📜 Assignment Details</h2>
+
+    <p style="font-size: 18px; margin: 10px 0;"><strong>📌 Title:</strong> <span style="color: #333;">{{ assignment.title }}</span></p>
+    <p style="font-size: 16px; margin: 10px 0;"><strong>📝 Description:</strong> <span style="color: #555;">{{ assignment.description }}</span></p>
+    <p style="font-size: 16px; margin: 10px 0;"><strong>⏳ Due Date:</strong> <span style="color: #d9534f; font-weight: bold;">{{ assignment.due_date }}</span></p>
+
+    {% if assignment.attachment %}
+        <p style="margin: 10px 0;">
+            <strong>📂 Attachment:</strong> 
+            <a href="{{ assignment.attachment.url }}" download 
+               style="display: inline-block; text-decoration: none; background-color: #007bff; color: white; padding: 8px 15px; border-radius: 5px; font-weight: bold;">
+                ⬇️ Download File
+            </a>
+        </p>
+    {% else %}
+        <p style="color: #d9534f; font-weight: bold;">🚫 No attachment provided by teacher.</p>
+    {% endif %}
+
+    <hr style="margin: 20px 0; border: 1px solid #ddd;">
+
+    <h3 style="color: #28a745; text-align: center; margin-bottom: 15px;">📥 Submit Your Homework</h3>
+
+    <form method="post" enctype="multipart/form-data" style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        {% csrf_token %}
+        <div style="margin-bottom: 15px;">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" 
+                style="width: 100%; background-color: #28a745; color: white; padding: 12px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+            ✅ Submit Assignment
+        </button>
+    </form>
+
+</div>
+
+{% endblock content %}

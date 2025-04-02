@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Hamro-School</title>
+
+  <style media="screen">
+    a:link {
+      text-decoration: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Roboto", sans-serif;
+    }
+
+    header {
+      position: fixed;
+      background: #22242A;
+      padding: 20px;
+      width: 100%;
+      z-index: 1;
+    }
+
+    .left_area h3 {
+      color: #fff;
+      margin: 0px;
+      text-transform: uppercase;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .left_area span {
+      color: #19B3D3;
+    }
+
+    .logout_btn {
+      padding: 5px;
+      background: #19B3D3;
+      text-decoration: none;
+      float: right;
+      margin-top: -30px;
+      margin-right: 40px;
+      border-radius: 2px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      transition: 0.5s;
+      transition-property: background;
+    }
+
+    .logout_btn:hover {
+      background: #0B87A6;
+    }
+
+    .sidebar {
+      background: #2f323a;
+      margin-top: 70px;
+      padding-top: 30px;
+      position: fixed;
+      left: 0;
+      width: 250px;
+      height: 100%;
+      transition: 0.5s;
+      transition-property: left;
+      overflow-y: auto; /* Enables scrolling in the sidebar */
+    }
+
+    .sidebar .profile_image {
+      width: 100px;
+      height: 100px;
+      border-radius: 100px;
+      margin-bottom: 10px;
+    }
+
+    .sidebar h4 {
+      color: #ccc;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .sidebar a {
+      color: #fff;
+      display: block;
+      width: 100%;
+      line-height: 60px;
+      text-decoration: none;
+      padding-left: 40px;
+      box-sizing: border-box;
+      transition: 0.5s;
+      transition-property: background;
+    }
+
+    .sidebar a:hover {
+      background: #19B3D3;
+    }
+
+    .sidebar i {
+      padding-right: 10px;
+    }
+
+    label #sidebar_btn {
+      z-index: 1;
+      color: #fff;
+      position: fixed;
+      cursor: pointer;
+      left: 300px;
+      font-size: 20px;
+      margin: 5px 0;
+      transition: 0.5s;
+      transition-property: color;
+    }
+
+    label #sidebar_btn:hover {
+      color: #19B3D3;
+    }
+
+    #check:checked~.sidebar {
+      left: -190px;
+    }
+
+    #check:checked~.sidebar a span {
+      display: none;
+    }
+
+    #check:checked~.sidebar a {
+      font-size: 20px;
+      margin-left: 170px;
+      width: 80px;
+    }
+
+    .content {
+      margin-left: 250px;
+      background: url(background.png) no-repeat;
+      background-position: center;
+      background-size: cover;
+      height: 100vh;
+      transition: 0.5s;
+      overflow-y: auto; /* Enables scrolling in the content */
+    }
+
+    #check:checked~.content {
+      margin-left: 60px;
+    }
+
+    #check {
+      display: none;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+</head>
+
+<body>
+
+  <input type="checkbox" id="check">
+  <!--header area start-->
+  <header>
+    <label for="check">
+      <i class="fas fa-bars" id="sidebar_btn"></i>
+    </label>
+    <div class="left_area">
+      <h3>School Management</h3>
+    </div>
+    <div class="right_area">
+      <form action="/logout/" method="POST" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="logout_btn">Logout</button>
+      </form>
+    </div>
+  </header>
+  <!--header area end-->
+
+  <!--sidebar start-->
+  <div class="sidebar">
+    <center>
+      <div class="profile-box" style="text-align: center; margin-top: 20px;">
+        <img id="profile-preview" 
+             src="{% if user.userprofile.profile_picture %}{{ user.userprofile.profile_picture.url }}{% else %}{% static 'images/no-pic.png' %}{% endif %}" 
+             class="profile_image" 
+             alt="Profile Picture" 
+             style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc; margin-bottom: 20px;" />
+        <h4 style="font-size: 18px; color: #fffefe; font-weight: bold;">{{ request.user.first_name }}</h4>
+      </div>
+      
+      <input type="file" id="profile-upload" style="display: none;" accept="image/*" onchange="previewImage()" />
+      
+    </center>
+    <script>
+      function previewImage() {
+      const file = document.getElementById('profile-upload').files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('profile-preview').src = e.target.result;
+      };
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+    
+    // Function to save the image and update the preview
+    function saveImage() {
+      const formData = new FormData();
+      const file = document.getElementById('profile-upload').files[0];
+    
+      if (file) {
+        formData.append('profile_picture', file);
+    
+        fetch('/save-profile-picture/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'  // Include the CSRF token
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Profile picture updated successfully');
+            // Update the preview image with the new image URL
+            document.getElementById('profile-preview').src = data.image_url;
+          } else {
+            alert('Failed to upload the picture: ' + data.error);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while uploading the image');
+        });
+      } else {
+        alert('No file selected');
+      }
+    }
+        </script>
+    <a href="/studentprofile/profile/"><i class="fas fa-cog"></i><span>Profile Settings</span></a>
+    <a href="/student-dashboard"><i class="fas fa-desktop"></i><span>Dashboard</span></a>
+    <a href="/student-attendance"><i class="fas fa-address-card"></i><span>Attendance</span></a>
+    <a href="/leave/"><i class="fas fa-user-edit"></i><span>Leave Request</span></a>
+    <a href="/homework/student/"><i class="fas fa-file-alt"></i><span>Home-Work</span></a>
+    <a href="#"><i class="fas fa-comments"></i><span>Communication</span></a>
+    <a href="#"><i class="fas fa-book"></i><span>Course Book</span></a>
+    <a href="#"><i class="fas fa-file-alt"></i><span>Exam and Result</span></a>
+    <a href="#"><i class="fas fa-video"></i><span>Live Class</span></a>
+  </div>
+  <!--sidebar end-->
+
+  <!--content start-->
+  <div class="content">
+    <br><br><br><br><br>
+    {% block content %}
+    {% endblock content %}
+
+    <br><br><br>
+    {% include "school/footer.html" %}
+  </div>
+  <!--content end-->
+
+</body>
+
+</html>

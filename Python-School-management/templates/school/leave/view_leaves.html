@@ -1,0 +1,40 @@
+<h2>Leave Requests</h2>
+<table border="1">
+    <tr>
+        <th>User</th>
+        <th>Leave Type</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Total Days</th>
+        <th>Reason</th>
+        <th>Attachment</th>
+        <th>Status</th>
+        {% if request.user.is_staff %}
+        <th>Actions</th>
+        {% endif %}
+    </tr>
+    {% for leave in leaves %}
+    <tr>
+        <td>{{ leave.user.username }}</td>
+        <td>{{ leave.leave_type }}</td>
+        <td>{{ leave.start_date }}</td>
+        <td>{{ leave.end_date }}</td>
+        <td>{{ leave.total_days }}</td>
+        <td>{{ leave.reason }}</td>
+        <td>
+            {% if leave.attachment %}
+            <a href="{{ leave.attachment.url }}">View</a>
+            {% else %}
+            No Attachment
+            {% endif %}
+        </td>
+        <td>{{ leave.status }}</td>
+        {% if request.user.is_staff %}
+        <td>
+            <a href="{% url 'manage_leave' leave.id 'approve' %}">Approve</a> |
+            <a href="{% url 'manage_leave' leave.id 'reject' %}">Reject</a>
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>

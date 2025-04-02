@@ -1,0 +1,48 @@
+{% extends 'teacher/teacherbase.html' %}
+{% load static %}
+
+{% block content %}
+
+<h2 style="color: #333; text-align: center; font-size: xx-large;">Assignments</h2>
+
+<a href="{% url 'create_assignment' %}" 
+   style="text-decoration: none; background-color: #007bff; color: white; padding: 8px 15px; 
+          border-radius: 5px; display: inline-block; margin-bottom: 15px;">
+    Create Assignment
+</a>
+
+<table border="1" style="width: 80%; margin: auto; border-collapse: collapse; background: white;
+                         border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); overflow: hidden;">
+    <tr style="background-color: #007bff; color: white;">
+        <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Title</th>
+        <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Description</th>
+        <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Due Date</th>
+        <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Class</th>
+        <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">View Submissions</th>
+    </tr>
+    {% for assignment in assignments %}
+    <tr style="background-color: {% cycle '#f2f2f2' 'white' %};">
+        <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">{{ assignment.title }}</td>
+        <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">{{ assignment.description }}</td>
+        <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">{{ assignment.due_date }}</td>
+        <td style="padding: 12px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #007bff;">
+            {{ assignment.class_assigned|title }}
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+            {% if assignment.submissions.exists %}
+                {% for submission in assignment.submissions.all %}
+                    <a href="{% url 'review_submission' submission.id %}" 
+                       style="text-decoration: none; background-color: #28a745; color: white; padding: 5px 10px; 
+                              border-radius: 5px; display: inline-block; margin: 2px;">
+                        Review Submission 
+                    </a><br>
+                {% endfor %}
+            {% else %}
+                <span style="color: red;">No Submissions</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock content %}

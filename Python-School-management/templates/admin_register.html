@@ -1,0 +1,35 @@
+{% extends 'admin/adminbase.html' %}
+{% block content %}
+
+<form method="post" style="max-width: 400px; margin: auto; padding: 20px; background: #f9f9f9; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+    {% csrf_token %}
+
+    <h2 style="text-align: center; margin-bottom: 20px; font-family: Arial, sans-serif;">Admin Signup</h2>
+
+    <label for="id_username" style="font-weight: bold;">Username:</label>
+    <input type="text" name="username" id="id_username" required 
+           style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+    <label for="id_first_name" style="font-weight: bold;">First Name:</label>
+    <input type="text" name="first_name" id="id_first_name" required 
+           style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+    <label for="id_last_name" style="font-weight: bold;">Last Name:</label>
+    <input type="text" name="last_name" id="id_last_name" required 
+           style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+    <label for="id_email" style="font-weight: bold;">Email Address:</label>
+    <input type="email" name="email" id="id_email" required 
+           style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+    <label for="id_password" style="font-weight: bold;">Password:</label>
+    <input type="password" name="password" id="id_password" required 
+           style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 5px;">
+
+    <button type="submit" 
+            style="width: 100%; background: #007bff; color: white; padding: 10px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+        Register
+    </button>
+</form>
+
+{% endblock %}

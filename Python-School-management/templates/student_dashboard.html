@@ -1,0 +1,65 @@
+{% extends 'student/studentbase.html' %}
+
+{% load custom_filters %}
+{% block content %}
+
+<h2 style="color: #007bff; text-align: center;">Available Assignments</h2>
+
+<table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
+    <tr style="background-color: #f8f9fa;">
+        <th style="padding: 10px; border: 1px solid #ddd;">Title</th>
+        <th style="padding: 10px; border: 1px solid #ddd;">Description</th>
+        <th style="padding: 10px; border: 1px solid #ddd;">Due Date</th>
+        <th style="padding: 10px; border: 1px solid #ddd;">Submit Homework</th>
+    </tr>
+    {% for assignment in assignments %}
+    <tr>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ assignment.title }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ assignment.description }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ assignment.due_date }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+            {% if not submissions|get_item:assignment.id %}
+                <a href="{% url 'submit_homework' assignment.id %}" 
+                   style="text-decoration: none; background-color: #28a745; color: white; padding: 5px 10px; border-radius: 5px;">
+                    Submit
+                </a>
+            {% else %}
+                <span style="color: green; font-weight: bold;">✅ Submitted</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2 style="color: #007bff; text-align: center; margin-top: 20px;">My Submissions</h2>
+
+<table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
+    <tr style="background-color: #f8f9fa;">
+        <th style="padding: 10px; border: 1px solid #ddd;">Title</th>
+        <th style="padding: 10px; border: 1px solid #ddd;">Status</th>
+        <th style="padding: 10px; border: 1px solid #ddd;">Submitted At</th>
+        <th style="padding: 10px; border: 1px solid #ddd;">Teacher Feedback</th>
+        <th style="padding: 10px; border: 1px solid #ddd;">Grade</th>
+        <th style="padding: 10px; border: 1px solid #ddd;">Submitted File</th>
+    </tr>
+
+    {% for submission in submissions.values %}
+    <tr>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ submission.assignment.title }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd; color: {% if submission.status == 'pending' %}orange{% else %}green{% endif %};">
+            {{ submission.status }}
+        </td>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ submission.submitted_at }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ submission.teacher_feedback|default:"No feedback yet" }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ submission.grade|default:"Not graded" }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+            <a href="{{ submission.attachment.url }}" download 
+               style="text-decoration: none; background-color: #007bff; color: white; padding: 5px 10px; border-radius: 5px;">
+                Download
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock content %}

@@ -1,0 +1,12 @@
+# Ignore environment variables
+.env
+*.env
+
+# Django-specific
+*.log
+db.sqlite3
+
+# Byte-compiled / cached
+__pycache__/
+*.py[cod]
+*$py.class
